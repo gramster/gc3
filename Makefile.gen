@@ -1,0 +1,156 @@
+##################################################
+# Secondary makefile for Gram's Commander v3.3   #
+# Don't change anything in here!                 #
+##################################################
+
+CFILES = rse.c sel.c gc3.c gccomp.c gcterp.c gcsort.c \
+		gcdisk.c gclib.c gckey.c gcscreen.c gccode.c gcconfig.c
+HFILES = gc3.h gclib.h gckey.h gccc.h gcops.h gcerr.h gcboth.h doscfg.h unixcfg.h gcport.h
+MFILES = Makefile Makefile.gen gc3.key gcrules rename.sh 
+DFILES = LEGAL.DOC INSTALL.DOC README gc3help.txt gc3.man sel.man
+PKGFILES = $(CFILES) $(HFILES) $(MFILES) $(DFILES)
+
+.c.obj:
+	$(CC) $(CFLAGS) -c $<
+
+.SUFFIXES:	.cat .man .c .obj
+
+###################
+# PRIMARY TARGETS #
+###################
+
+all: gc3$(XSUF) sel$(XSUF) $(CODEFILE)
+	-make rse.exe
+	-make gc3.cat
+	-make sel.cat
+
+dosdeflt: rse$(XSUF) gc3$(XSUF) sel$(XSUF) gc3.cod
+
+unxdeflt: gc3$(XSUF) gc3.cat sel.cat sel$(XSUF) .gc3cod
+
+######
+# GC #
+######
+
+gc3$(XSUF): gc3$(OSUF) gccomp$(OSUF) gcterp$(OSUF) gcsort$(OSUF) gcdisk$(OSUF) gckey$(OSUF) gcscreen$(OSUF) gccode$(OSUF) gclib$(OSUF) Makefile
+	$(CC) $(LDFLAGS) $(GC3OUT) gc3$(OSUF) gccomp$(OSUF) gcterp$(OSUF) gcsort$(OSUF) gckey$(OSUF) gcdisk$(OSUF) gcscreen$(OSUF) gccode$(OSUF) gclib$(OSUF) $(LIBS)
+
+gc3$(OSUF): gc3.c gc3.h gclib.h gckey.h Makefile.2 gcport.h
+
+gccomp$(OSUF): gccomp.c gccc.h gclib.h gcops.h gckey.h Makefile.2 gcport.h
+
+gcterp$(OSUF): gcterp.c gc3.h gclib.h gckey.h gcops.h Makefile.2 gcport.h
+
+gcsort$(OSUF): gcsort.c gc3.h Makefile.2 gcport.h
+
+gcdisk$(OSUF): gcdisk.c gc3.h gclib.h gcboth.h gcops.h Makefile.2 gcport.h
+
+gckey$(OSUF): gckey.c gckey.h gc3.h Makefile.2 gcport.h
+
+gcscreen$(OSUF): gcscreen.c gc3.h gclib.h gckey.h Makefile.2 gcport.h
+
+gccode$(OSUF): gccode.c gcboth.h gclib.h gcerr.h Makefile.2 gcport.h
+	$(CC) -DGC3 $(CFLAGS) -c gccode.c
+
+gclib$(OSUF): gclib.c gclib.h gckey.h Makefile.2 gcport.h
+	$(CC) -DGC_CURSES $(CFLAGS) -c gclib.c
+
+gcport.h: gcsite.h
+	touch gcport.h
+
+gc3.h: gcerr.h gcboth.h
+	touch gc3.h
+
+gcboth.h: doscfg.h unixcfg.h
+	touch gcboth.h
+
+gccc.h: gcerr.h gcboth.h
+	touch gccc.h
+
+##############################################	
+# STANDARD ERROR REDIRECTOR (NEEDED FOR DOS) #
+##############################################
+	
+rse$(XSUF): rse.c
+	$(CC) $(CFLAGS) rse.c
+
+################
+# Pick utility #
+################
+
+sel$(XSUF): sel$(OSUF) gclib$(OSUF) gcport.h
+	$(CC) $(LDFLAGS) $(SELOUT) sel$(OSUF) gclib$(OSUF) $(WILDARGS) $(LIBS)
+
+sel$(OSUF): sel.c
+
+#################
+# OTHER TARGETS	#
+#################
+
+$(CODEFILE): gc3.key gc3$(XSUF)
+	$(GC3CC) -F
+
+bothclean:
+	-$(DELETE) sel$(XSUF)
+	-$(DELETE) gc3$(XSUF)
+	-$(DELETE) site.def
+	-$(DELETE) gcsite.h
+	-$(DELETE) $(CODEFILE)
+	-$(DELETE) *$(OSUF)
+
+dosclean:
+	-$(DELETE) rse$(XSUF)
+
+unixclean:
+	-$(DELETE) $(GC3MTRGT)
+	-$(DELETE) $(SELMTRGT)
+
+dosinst: gc3$(XSUF) sel$(XSUF) instbin
+
+unxinst: gc3$(XSUF) $(GC3MTRGT) $(SELMTRGT) instbin
+	-$(CHMOD) 511 $(BINDEST)/gc3$(XSUF)
+	-$(CHMOD) 511 $(BINDEST)/sel$(XSUF)
+	-mkdir $(CATDEST)
+	-mkdir $(MANDEST)
+	-$(COPY) $(GC3MTRGT) $(CATDEST)/gc3.$(MANSUF)
+	-$(COPY) $(SELMTRGT) $(CATDEST)/sel.$(MANSUF)
+	-$(COPY) gc3.man $(MANDEST)/gc3.$(MANSUF)
+	-$(COPY) sel.man $(MANDEST)/sel.$(MANSUF)
+	-$(CHMOD) 644 $(MANDEST)/gc3.$(MANSUF)
+	-$(CHMOD) 644 $(CATDEST)/gc3.$(MANSUF)
+	-$(CHMOD) 644 $(MANDEST)/sel.$(MANSUF)
+	-$(CHMOD) 644 $(CATDEST)/sel.$(MANSUF)
+
+instbin:
+	-$(COPY) gc3$(XSUF) $(BINDEST)
+	-$(COPY) sel$(XSUF) $(BINDEST)
+	-$(COPY) gc3.key $(BINDEST)
+	-$(COPY) gc3help.* $(BINDEST)
+	-$(COPY) gcrules $(RULES)
+
+package: 
+	-$(DELETE) gcpost*
+	shar -D -ogcpost -l45 $(PKGFILES)
+
+tar:
+	tar cvf gc33.tar $(PKGFILES)
+	compress gc33.tar
+
+ship:
+	tar cvf gc33.tar $(PKGFILES)
+
+# what I use for transport between DOS/UNIX...
+
+zip:
+	zip -ur gc33 $(HFILES)
+	zip -ur gc33 $(CFILES)
+	zip -ur gc33 $(MFILES)
+	zip -ur gc33 $(DFILES) postit
+
+gc3.cat: gc3.man
+	$(ROFF) $(RFLAGS) <gc3.man  >gc3.cat
+
+sel.cat: sel.man
+	$(ROFF) $(RFLAGS) <sel.man  >sel.cat
+
+

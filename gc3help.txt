@@ -1,0 +1,990 @@
+@entry{INTRO,Welcome!}
+
+This manual describes Gram's Commander version 3.3. Gram's
+Commander is a window-based file manager program for UNIX and
+MS-DOS. It is almost completely user-configureable, using a
+script language to define functions which associated with keys.
+When a key is pressed, if a function is associated with it, 
+that function is executed. If a printable key is pressed which
+is not bound to a function, a special default function is
+executed.
+
+gc3 allows `@ref{CONTAINERS,container}' files (such as tar, cpio, zip, etc),
+to be treated almost seamlessly as directories. The handling of these
+files is determined by a set of @ref{CNT_RULES,rules}.
+
+@entry{INVOKE,Invoking gc3}
+
+gc3 is invoked as:
+
+        gc3 [flags] [ <primary path> [ <secondary path> ] ]
+
+The two paths are the paths that gc3 will use at the start for
+the two window directories. If these are not given, gc3 will attempt
+to determine the secondary directory from the *initialisation file*,
+and use the current directory as the primary. If there is no initialisation
+file, both windows show the current directory.
+
+The flags can be divided into those for:
+
+        * @ref{COMPILEFLAGS,controlling compilation}
+        * @ref{DISASSEMBLY,disassembling the compiled script}
+        * @ref{DEBUGGING,script debugging}
+        * @ref{OTHERFLAGS,miscellaneous options}
+
+@entry{COMPILEFLAGS,  Controlling Script Compilation}
+
+The following @ref{INVOKE,command line flags} are related to script compilation:
+
+  -C[<script>]  Forces a script recompile; the default script name if
+                one is not specified is `gc3.key'.
+
+  -D<id>        Defines identifiers for @ref{CONDCOMP,conditional compilation}
+                of the script (used with -C).
+
+  -v            Causes the compiler to output more verbose messages, as
+                well as a reference count for each identifier.
+
+  -F            Forces the output of the compilation to be placed in
+                the current directory
+
+@entry{DISASSEMBLY,  Disassembling a Script}
+
+The following @ref{INVOKE,command line flags} can be used for script code disassembly
+(for gc3 hackers only!):
+
+  -d[n][l]      Causes a disassembled listing of the compiled script
+                to be written to standard output. The `n' option produces
+                a numeric dump, while the `l' option causes the link
+                phase to be skipped before the dump is produced. The
+                script will be recompiled before the dump is made;
+                -d can thus be used in conjunction with -C and -D.
+
+@entry{DEBUGGING,  Script Debugging}
+
+The following @ref{INVOKE,command line flags} can be used for script debugging:
+
+  -i            Shows the current instruction pointer value at bottom
+
+  -t or -T      Generates an execution trace of GCScript opcodes in a
+                file called gc3.ip(created in the root directory under
+                DOS, or /tmp under UNIX). This is obviously for experts
+                only! (at the time of writing, that means me ;-) ). The -T
+                argument causes the trace to start from the beginning of 
+                execution (including gcinit and gcstart), while the -t
+                argument starts from the main key processing loop.
+
+@entry{OTHERFLAGS,  Other Flags}
+
+The following @ref{INVOKE,command line flags} can also be used:
+
+  -c0           inhibit the use of colour under UNIX; this is only
+                applicable to terminals that support colour.
+
+  -c1           re-enable the use of colour under UNIX; this is only
+                applicable to terminals that support colour.
+
+  -I            Forces the script's first-time initialisation function
+                to be called even if there is an .ini file.
+
+@entry{SCRIPTLOC,  Script Name and Directory}
+
+The gc3 script is called `gc3.key' It is compiled to produce a code
+file named `.gc3cod' (`gc3.cod' under DOS). This file must be placed
+in the directory specified by the GCPATH environment variable, or the
+HOME environment variable (UNIX), or the root directory C:\ (DOS) or
+the current directory. gc3 will search in the order:
+
+        * directory specified by $GCPATH, if any
+        * (DOS) the root directory \ or (UNIX) the $HOME directory
+        * the current directory
+        * the directories specified by $PATH
+
+@entry{SCREEN,The Screen Display}
+
+When `gc3' starts up, the screen will be split into five windows.
+Four of them should have box-like borders around them (this doesn't
+always work with X/Windows xterms but can be worked around). The 
+fifth area is the bottom line of the screen, which is used by the
+command line editor and for error messages.
+
+The four boxed windows are split into a left and right pair. Each pair
+gives information about one directory (they may be the same). The upper
+window is the @ref{FILEWIN,File Window} which show the files in the directories. An 
+arrow-shaped cursor should be visible, which points at some file entry.
+The lower window is the @ref{STATUSWIN,Status Window}.
+
+@entry{ACTIVEWIN,  The Active Window}
+
+One of the two windows has the active cursor in it; this is the
+active window. Most operations in gc3 take place in the directory
+associated with this window (which is the current directory). The
+secondary window is mostly used for the file view or tree modes, or
+as a target directory for move/copy/compare operations.
+
+You can switch between windows (thus activating the other window)
+with the TAB key or left and right cursor keys.
+
+@entry{STATUSWIN,  The Status Windows}
+
+The small bottom windows give further information about the
+file at which the cursor is pointing in the @ref{FILEWIN,File Window}, as
+well as listing the number and cumulative size of all the @ref{FILESLCT,selected} file
+entries.
+
+@entry{FILEWIN,  The File Windows}
+
+The upper window is labelled with the path of the directory being
+displayed, as well as a @ref{FILTER, window filter} pattern specifying which files
+of that directory should be displayed (for example, *.C under DOS if
+only C files are being displayed).
+
+Either the left or right window will have the path name shown in inverse
+video; it will also have a double arrow cursor ==> as opposed to the other
+window's single arrow cursor -->. This indicates that it is the
+@ref{ACTIVEWIN,active window}. The current working directory is always the same
+as the active window path; if you change windows the current directory
+will change accordingly.
+
+The information displayed depends on the @ref{WINTYPES,window type}.
+
+@entry{WINTYPES,    File Window Types}
+
+The file window can show the contents of a @ref{DIRVIEW,directory}, a @ref{FILEVIEW,file}
+or display a @ref{TREEVIEW,directory tree}. You can change the file window type
+from the left and right @ref{WINDOWMENU,window menus}.
+
+@entry{DIRVIEW,      Directory Window Type}
+
+This is the default type for the file window. The contents of a directory
+are displayed. The directory shown in the @ref{ACTIVEWIN,active window} is the 
+current working directory; when you change the active window you are
+changing the working directory.
+
+You can @ref{FILESLCT,select} files in directory windows and perform actions on them.
+The files in directory windows are sorted in an order determined by the
+@ref{SORTING,primary and secondary sort keys}.
+
+Apart from the name of each file, you can also get gc3 to display the
+size, date, etc, in the left and right @ref{WINDOWMENU,window submenus} accessible
+from the main menu.
+
+@entry{FILTER,        Filtering Directories}
+
+You can specify the filter to use in the left and right @ref{WINDOWMENU,window submenus}
+accessible from the main menu.
+
+@entry{SORTING,        Sorting Directories}
+
+The files in directory windows are sorted in an order determined by the
+primary and secondary sort keys. You can set the primary sort key for
+a window by pressing Alt-S (DOS) or S (UNIX). You cannot set the
+secondary sort key directly; instead, each time you set a primary sort
+key the old primary sort key becomes the new secondary sort key. Thus,
+to sort the window by extension (primary) and size (secondary), one could
+press "SSSX" under UNIX or "Alt-S S Alt-S X" under DOS.
+
+Note that if you press an upper-case letter for a sort key a
+descending sort will be used (else ascending).
+
+You can also set the sort key in the left and right @ref{WINDOWMENU,window submenus}
+accessible from the main menu.
+
+@entry{FILEVIEW,      View Window Type}
+
+This causes the contents of the file pointed to by the cursor in the
+other window (which must be a @ref{DIRVIEW,directory window}) to be displayed.
+
+In the viewer window, the cursor navigation keys move you around the 
+viewed file, while in the directory window, moving the cursor causes the
+viewer to load up the file at the cursor each time it is moved.
+However, if you have the expert keys bound, you can `lock' a file
+in the view window with ^L (this toggles the lock on/off).
+
+If the file being viewed is a directory or container, this is the same
+as having a normal directory window display in the view window. 
+Otherwise, if the file being viewed is binary data (determined by a
+heuristic), then it is displayed as a hex dump, otherwise otherwise
+it is displayed as text. Text files are paginated before they are loaded
+into the viewer. The number of lines the viewer can display is limited
+by the size of the pagination table (about 2500 at the time of writing).
+
+@entry{TREEVIEW,      The Directory Tree Viewer}
+
+This type displays a subtree of the directory tree structure in a
+way which shows the hierarchical relationships clearly. It enables
+fast navigation through directory hierarchies. When the cursor is 
+moved through the directory tree, the opposite window changes to a
+directory view of the corresponding directory. 
+
+Under UNIX directory trees can be huge, so a subtree is used; you
+can specify the root of the subtree, and the maximum depth. The 
+tree is read once only, unless a reread is explicitly forced.
+
+@entry{CMDLNED,The Command Line Editor}
+
+If a command is typed in, or the script command `read' is executed,
+the gc3 command line editor is entered. This editor supports a number
+of simple editing functions. Most of these have keycodes already 
+defined under DOS, but not many do under UNIX, so if you want to use
+them you are going to have to add the necessary `keycode' statements
+to the script file.
+
+@entry{CEDKEYS,  Default Command Line Editor Key Assignments}
+
+  Entry DOS     UNIX            Function
+  ------------------------------------------------------------------
+  238   F1      F1              Hypertext help hook
+  239   ^Home                   Insert file name at cursor position
+  240   Home    Home            Move to start of line
+  241   End     End             Move to end of line
+  242   Left    Left            Move cursor left
+  243   Right   Right           Move cursor right
+  244   Del                     Delete character at cursor
+  245   Bkspc   See below       Delete character left of cursor
+  246   Ins                     Toggle insert/overwrite mode
+  247   Esc     See below       Clear whole line
+
+Under UNIX gc3 gets keycodes 245 and 247 from the terminal stty settings.
+
+(continued on next page)
+
+@entry{CEDKEYS2,  Default Command Line Editor Key Assignments (page 2)}
+
+(continued from previous page)
+
+  Entry DOS     UNIX            Function
+  ------------------------------------------------------------------
+  248   Alt-L                   Delete from start of line to cursor
+  249   Alr-R                   Delete from cursor to end of line
+  250   Alt-P                   Delete from start of prev word to cursor
+  251   Alt-N                   Delete from cursor to start of next word
+  252   ^left                   Move cursor to start of previous word
+  253   ^right                  Move cursor to start of next word
+  254   ^PgUp                   Recall previous command
+  255   ^PgDn                   Recall next command
+
+@entry{GEN_USE,Using gc3}
+
+Using gc3 in general consists of the following typical actions:
+
+* commands can be typed straight in and executed by a command shell,
+        gc3 supports @ref{CMDLNED,command line history recall and editing}.
+
+* the cursor can be moved around to files of interest and actions (such
+        as viewing, editing, copying, moving, listing contents of archives,
+        etc) can be performed on the file pointed to by the cursor.
+
+* sets of files can be selected and actions (such as moving, deleting,
+	counting words, etc) can performed upon the entire group. 
+
+* there are also include functions in the script to perform other tasks,
+	such as evaluating a numeric expression.
+
+@entry{INITFILE,The Initialisation Files}
+
+An initialisation file is created when you exit gc3. gc3 writes a 
+version ID, the current primary directory path, and the current values
+of all user-settable global variables to this file, named .gc3ini under
+UNIX, and gc3.ini under DOS. The file is created in the $GCPATH directory
+if defined), or the root directory (DOS) or $HOME directory (UNIX).
+
+When gc3 is started up, it attempts to re-initialise the variables
+from this file. It searches for an .ini file in the order:
+
+        * $GCPATH
+        * $HOME (UNIX) or \ (DOS)
+        * current directory
+        * the directories in the $PATH
+
+If there is no .ini file gc3 attempts to re-initialise global variables
+to sensible values.
+
+@entry{FUNCTION,The gc3.key Script}
+
+The default gc3.key script file provides a fairly comprehensive set
+of functions for DOS and UNIX.
+
+Under DOS, no alphanumeric keys are bound, while under UNIX, no
+lower-case letters other than `j' and `k' are bound. Thus, pressing
+any of these unbound keys causes the `gcdefault' function to be called.
+This function invokes the command line editor after inserting the
+key that was pressed into the edit buffer. You will see a prompt 
+`Command?' at the bottom of the screen. You can then complete the 
+command and execute it by pressing ENTER. The command will then
+be @ref{CMDPREPROC,preprocessed} and executed.
+
+@entry{CMDPREPROC,  Command Pre-processing in the Default Script}
+
+ * if the command entered was a change directory `cd' command,
+        it is handled internally by the GCScript `cd' command
+
+ * if the `command' entered is the pathname of a directory,
+        gc3 changes to that directory
+
+ * if the command ends with one of the special suffixes defined in
+        the @ref{COMMANDOPTS,Command Options}, then the suffix
+        character is stripped and the associated prefix and suffix 
+        are placed around the command
+
+ * if the $saveOutput variable is true and the command does not yet
+	contain a pipeline, the tee @ref{EXCEPT,exceptions list} is checked to 
+	see if the command can be piped or not. If it can be, a 
+	`| tee tempfile' is added.
+
+The command is then executed.
+
+@entry{FILESLCT,  Selecting Files}
+
+Selected file entries are shown in inverse video. Using the default script,
+the Space key (UNIX) or INS key (DOS) selects or deselects the currently
+arrowed file. There are other means of selecting files as well. The `+'
+or `-' key can be pressed, in which case you will be prompted for a
+filename pattern. All files in the active directory whose names match
+the pattern will be selected (or deselected). You can select all
+files in the current directory with Alt-A (DOS) or A (UNIX), or no
+files (deselect all) with Alt-N (DOS) or N (UNIX). You can invert the
+current selection with Alt-I (DOS) or I (UNIX).
+
+Once files have been selected, you can apply operations such as
+moving, deleting, editing, etc, to the entire group in the selection.
+
+@entry{BASICOPS,  Moving, Deleting, Copying, Editing and Viewing Files}
+
+These all constitute basic operations in gc3.key. Basic operations
+are applied to the currently selected files, or to the file at the
+cursor in the active window if no files are selected. If you copy or
+move files, you will be prompted for the destination, which you can
+edit if you wish. After specifying the destination, press ENTER to 
+start the move or copy. Deleting files results in them being moved to
+the trash directory if the @ref{SAFEDEL,safe delete} feature is enabled.
+
+    DOS Key   UNIX Key   Action
+ ----------------------------------------------------------
+    Alt-C     C          Copy file(s)
+    Alt-M     M          Move file(s)
+    Alt-D     D          Delete file(s)
+    Alt-E     E          Edit file(s)
+    Alt-V     V          View file(s)
+
+@entry{SAFEDEL,  Safe Delete Feature}
+
+You can turn on a safe delete option from the @ref{OPTMENU,Options menu}. If this
+is enabled, then using the file delete command (`D' under UNIX or
+Alt-D under DOS) results in the file(s) being moved to a special 
+backup directory rather than being deleted. The files have their
+names changed to some unique random name, and an index file in the
+trash directory is updated with a line which gives the original name,
+new name, and date and time that the file was moved. This means that
+different files with the same name can be deleted and will be 
+independently preserved (until you clean out your trash directory).
+
+@entry{BASICKEYS,  Other Basic Key Assignments (page 1)}
+
+Some other actions you may find useful that are defined in gc3.key are:
+
+    DOS Key   UNIX Key   Action
+ ----------------------------------------------------------
+    Alt-A     A          Select all files in directory
+    Alt-N     N          Deselect all files in directory
+    Alt-I     I          Invert the current selection
+    Alt-B     B          Browse this help
+    Alt-H     H          Show key assignment help
+    Alt-P     T          Edit files containing a specified string
+    Alt-S     S          Quick sort menu
+    Alt-T     F          Show file type (using UNIX `file' command)
+    Alt-W     W          Show line, word and char count (uses UNIX `wc' cmd)
+    Alt-Q,X   Q          Quit
+
+@entry{BASICKEYS,  Other Basic Key Assignments (page 2)}
+
+Some other actions you may find useful that are defined in gc3.key are:
+
+    DOS Key UNIX   Action
+ ----------------------------------------------------------
+         ?         Start an incremental file name search
+         =         Invoke inbuilt expression calculator
+         `         Change window size/position
+         ,         Make both windows have same path
+         $         Spawn a shell
+    Ins     Space  Toggle select state of file and move down
+         Ctrl-A    Apply a command to all selected files in turn
+         Ctrl-B    Browse this help
+         Ctrl-R    Reread window information and repaint screen
+         Ctrl-Y    Review output of last command
+         Backspace Invoke main menu
+
+@entry{RULESFILE,  The Rules File}
+
+The file gcrules should be copied to your home directory and renamed 
+.gc3rul (UNIX) or gc3.rul (DOS). This file contains rules which are
+loaded up by the script to determine what editor, viewer and pager to
+use, what to do when ENTER is pressed, how to copy files in and out of
+container files, etc. The rules file consists of a number of areas,
+delimited by @ref{RULEAREAS,area identifiers}. The latter must occur on lines on their
+own with no whitespace.
+
+Each area contains a number of entries, each on its own line. Each entry
+has a name and a value, separated by an equals sign. Lines that contain
+only whitespace or begin with `#' are treated as comments and ignored.
+
+Multiple entries can be specified by separating them with `;' (DOS)
+or `:' (UNIX). Entries can be extended over more than one line by
+putting a backslash \ at the end of each line except the last.
+
+@entry{RULEAREAS,    The Rule Areas}
+
+The current version of gc3.key uses the following rule areas in the
+@ref{RULESFILE,rules file}:
+
+  [UNIXUtils]   editor, paginator and viewer preferences for UNIX
+  [DOSUtils]    editor, paginator and viewer preferences for UNIX
+
+  [UNIXActions] what to do when ENTER is pressed (UNIX)
+  [UDOSActions] what to do when ENTER is pressed (UNIX with DOS patterns)
+  [DOSActions]  what to do when ENTER is pressed (DOS)
+  [UNIXExcept]  the exception list for |tee (see sec 7.1)
+
+  [UNIXRule_n]  container rule areas for UNIX
+  [DOSRule_n]   container rule areas for DOS
+
+Note that only the last two types of areas contain rules that are 
+`built-in' to gc3; the others are specific to the gc3.key script.
+
+@entry{PROGRULES,    Editor, Paginator and Viewer Configuration}
+
+The [UNIXUtils] and [DOSUtils] areas in the @ref{RULESFILE,rules file} is used
+to decide what editor, paginator, and viewer programs gc3 should use if 
+not specified by environment variables. The paginator is used for viewing
+the output of commands; you must be able to pipe the output of commands to
+it, as in "command | pager". The file viewer is for viewing disk files
+(files with names); you must be able to execute it as in "viewer file".
+
+The rules consist of at least one field specifiying the exact name of 
+the editor, pager or viewer file. gc3 searches the directory path for
+each of these in turn, and uses the first one it finds. If there is more
+than one field, the others specify the actual command line to use; this
+allows you to pass flags through). Alternatively a rule can consist of
+just a gc3 variable name; gc3 will use the value if non-empty,  otherwise
+it will try the remaining entries in turn until one is successful or the
+list is exhausted.
+
+@entry{PROGCFGEX,      Editor, Paginator and Viewer Rules Example}
+
+Here is a sample [UNIXUtils] rules section:
+
+        [UNIXUtils]
+
+        Editor = vi:joe:emacs:xedit
+        Pager = less less -i:more more -w:pg
+        Viewer = $pager:view
+        
+This stipulates that gc3 will use the first of $EDITOR, vi, joe, emacs
+or xedit, as the editor. If you have `less', then `less -i' will be used
+to paginate files. If a paginator is defined, it will be used as the
+viewer, otherwise `view' (read-only vi) will be used.
+
+@entry{EXCEPT,    The Exception List}
+
+The script supports an option whereby the output of your commands
+is tee-ed to a file, and you can then recall it later by pulling
+it into a viewer such as `more' or `vi'. The is part of the
+@ref{CMDPREPROC,command preprocessing} under UNIX and is implemented
+using pipes; under DOS it is done with a screen save/restore.
+
+However, under UNIX certain commands shouldn't have their output
+piped - `vi', `elm', `ftp' are examples. gc3 reads an exception 
+list in the @ref{RULESFILE,rules file} to determine what these 
+programs are.
+
+See also the rule @ref{EXCEPTEG,example}.
+
+@entry{EXCEPTEG,      Exception Rule Example}
+
+The [UNIXExcept] rule area in the @ref{RULESFILE,rules file} contains
+the list of programs that shouldn't have their output piped. It is only
+needed under UNIX. A sample rule is:
+
+[UNIXExcept]
+
+CantTee =  vi   \
+        :  elm  \
+        :  nn   \
+        :  ftp  \
+        :  telnet       \
+        :  sh   \
+        :  ksh  \
+        :  more
+
+@entry{ACTIONRULES,    The Action Rules}
+
+The [UNIXActions], [DOSActions], and [UDOSActions] specify what commands
+to execute for different file types when the ENTER key is pressed. If a
+command ends with a !, then the command-line editor is entered allowing 
+editing of the command before execution; otherwise the command is executed
+immediately.
+
+You can also call a script function by specifying the function name
+followed by `@' for the command; for example, under DOS:
+
+        *.ZIP           viewzip@
+
+would cause the script function `viewzip' to be called when ENTER was
+pressed when the cursor is pointing at a zipfile. Note that arguments
+cannot be passed to the script function - this is a very basic hook.
+
+@entry{ACTIONTYPES,      File Name and Type Actions}
+
+Each @ref{ACTIONRULES,action rule area} has two entries, `NameActions'
+and `TypeActions'. The entries consist of zero or more subrules, each 
+of which consists of a pattern followed by a command. The patterns in the
+`NameActions' subrules are matched against the file name; the patterns
+in the `TypeActions' subrules are matched against the output of the 
+`file' command when run on the file. If you don't have an equivalent
+utility under DOS you can only use the NameActions rule; this isn't
+too much of a problem under DOS due to the consistent use of file
+extensions.
+
+@entry{ACTIONEG,        Action Rule Example}
+
+Here is a sample action rule for DOS:
+
+NameActions =   READ*.*         $viewprog $pFile           \
+        ;       *.BAT           $pFile !                   \
+        ;       *.COM           $pFile !                   \
+        ;       *.EXE           $pFile !                   \
+        ;       *.GIF           svga $pfile                \
+        ;       *.ZIP           pkunzip -v $pfile | $pager \
+        ;       *.ZOO           zoo x $base
+
+Note the use of predefined gc3 variables in the commands, such as
+$pfile (filename at cursor position in active window), $pager(the
+file paginator), $editor (the file editor) and $viewprog (the file
+viewer). In addition, the DOS rules can use a variable $base which
+is $pfile without the extension.
+
+@entry{CNT_RULES,    Container Rules}
+
+These rules specify how gc3 can handle container files such as tar, shar,
+cpio, zip, arc, etc files. They can also be used to support remote access
+to a single directory using rsh and rcp under UNIX. The rules tell gc3
+how to extract, update and delete} individual components of different
+types of containers (@ref{CONTCMD,add, extract and delete} fields), how
+to recognise type of file (@ref{CONTTYPE,name and type} fields), and how
+to get the name, size, and date time info (@ref{CONTCONT,other fields}). Using these
+rules, gc3 allows container files to be treated almost like directories.
+
+Fields that don't exist should have zero entries, or the field should be
+left out completely of the rule. Each rule must have at least either a
+name or a type field. The rules must be numbered sequentially from 1,
+with the prefix DOSRule_ or UNIXRule_. gc3 reads these in order from 1
+until a failure, so if you have rule 1 and rule 3 it will fail on rule
+2 and never get to 3.
+
+@entry{CONTYPE,      Name and Type fields}
+
+These fields tell gc3 how to identify the type of a container, based on
+the file name as well as the results of running the `file' command on 
+the container (UNIX only). The fields are:
+
+    name - a pattern matched against the name
+    type - a pattern matched against the output of `file'
+
+Both tests are applied and both must pass for the container to be
+associated with a rule; An empty field implies success.
+The following field could be used to recognise ZIP files (DOS):
+
+     name  = *.ZIP
+
+To recognise SVR4 cpio -c type containers under UNIX, we can use:
+
+     type  = expanded ASCII cpio
+
+
+@entry{CONTCMD,      Action Fields}
+
+These entries tell gc3 how to ADD the file @f to the container @x,
+how to EXTRACT the file @f from @x, and how to delete @f from @x.
+Not all operations may be possible (for example, deleting from a UNIX
+cpio container). @b is the base name of @f. Here are some examples:
+
+     Portable ZIP:              UNIX TAR:
+
+     add     = zip -u @x @f     add     = tar uf @x @f
+     extract = unzip -x @x @f   extract = tar xf @x @f
+     delete  = zip -d @x @f     delete  = tar df @x @f
+
+     UNIX SVR4 ASCII CPIO:
+
+     add     = basename @f | cpio -ocA -O @x
+     extract = cpio -ic @f < @x
+     delete  =
+
+@entry{CONTCONT,      Other Fields}
+
+The remaining fields allow gc3 to get information about the files in
+the container. The fields are:
+
+     list   - the command to run to get a list of container contents
+     fields - total number of whitespace separated fields in the
+              contents listing produced by the list command above
+     item   - the number of the field containing the component file name
+     size   - the number of the field containing the component file size
+
+There are six other fields used to obtain @ref{CONTDATE,date information}.
+Note that fields are numbered from 1. In the list entry, @x can be used 
+to represent the container file path; for example, for portable ZIP:
+
+     list = unzip -v @x
+
+@entry{CONTDATE,        Getting Date and Time Info}
+
+The date and time are parsed using the information given in
+six items; each of these specifies a field number and an offset
+within the field, separated by a comma. Each field should be
+numeric except the month which may be numeric or a recognisable
+3-or-more letter code. The items are:
+
+     year   - the field and offset giving the year
+     month  - the field and offset giving the month
+     day    - the field and offset giving the day
+     hour   - the field and offset giving the hour
+     min    - the field and offset giving the minutes
+     sec    - the field and offset giving the seconds
+
+@entry{CONTEXMPL,      Container Rule Example}
+
+Here is a sample line that results from running `pkunzip -v ' under
+DOS on a zip file:
+
+  9264  Implode   4324  54%  12-13-93  14:56  e170a621 ---  README
+
+Clearly, there are 9 fields, the size is given by the first and the
+name by the last. The date is given by the 5th field, with the month
+starting at offset 1, the day at offset 4, and the year at offset 7.
+Similarly, the time is given by the 6th field, with the hour at offset
+1 and the minutes at offset 4. Here are the relevant info entries for
+the rule (note - in reality each must be on a line of its own):
+
+     fields = 9      item  = 9       size = 1
+     year   = 5,7    month = 5,1     day  = 5,4
+     hour   = 6,1    min   = 6,4     #sec = 0,0
+
+@entry{NETCONN,      Network Copying/Deleting}
+
+The rules file distributed with gc3.3 includes a commented-out
+rule, [UNIXRule_5]. This rule illustrates how you can use a container
+file to access a remote directory across a network using rcp/rsh.
+At present, gc3 doesn't handle container subdirectories properly,
+which is the main limitation. However, you may still find this
+feature worth using.
+
+@entry{MAINMENU,  The Main Menu Bar}
+
+You can call up the main menu bar at the top of the screen by
+pressing Ctrl-H or backspace. The main menu contains the items
+@ref{WINDOWMENU,Left, Right}, @ref{TOPOPTMENU,Options}, @ref{ATTRIBMENU,Attributes}, @ref{UTILMENU,Utilities}, @ref{HELPMENU,Help} 
+and Quit. All but the last item are submenus.
+
+You can move between the items with the left and right cursor key, or
+by pressing the first letter of an item name. Press ENTER on an item
+to invoke that item (namely, either Quit or bring up a submenu).
+Press the ESC key to exit the menu and return to normal operations.
+If you are in a submenu you may have to press ESC more than once to
+back out of the nested menus.
+
+@entry{WINDOWMENU,    The Left and Right Window Menus}
+
+This submenu lets you set a number of options for the left or right
+window, including:
+
+     * the @ref{WINTYPES,window type}
+     * the @ref{SORTING,primary sort key}
+     * the @ref{SORTING,sort direction}
+     * what information to show with file names
+     * what file names to restrict the display to (the @ref{FILTER,filter})
+     * the @ref{TREEVIEW,tree depth and root directory} to use for tree display
+     * the position and size of the window
+
+@entry{TOPOPTMENU,    The Options Menu}
+
+This submenu lets you choose from three further submenus:
+
+     * @ref{DISPLAYOPTS,Display Options}
+     * @ref{COMMANDOPTS,Command Options}
+     * @ref{OTHEROPTS,Other Options}
+
+@entry{DISPLAYOPTS,      The Display Options}
+
+This submenu lets you set/clear a number of options that affect how
+gc3 displays information, namely:
+
+     * whether directories must be listed first ahead of other file
+          types, or treated the same as other files.
+     * whether hidden files should be shown or concealed. Under DOS
+          a hidden file is one with the hidden attribute set; under
+          UNIX a hidden file is one whose name egins with `.'.
+     * whether colour attributes should be used or not. 
+     * whether the | and - character should be used to draw window
+          borders. This is useful on some terminal types under UNIX
+          whose character sets don't support box-drawing characters.
+
+@entry{COMMANDOPTS,      The Command Options}
+
+This submenu lets you set/clear a number of options to do with the
+execution of commands:
+
+     * whether to clear the screen before executing a command
+     * whether to deselect files within a group of selected files
+          after they have been successfully copied or had some other
+          operation applied to them as a group
+     * whether to prompt for and wait for a keypress after executing
+          a command (before redrawing the gc3 display)
+     * whether to tee the output of each command to a temporary file from 
+          which it can be recalled with Ctrl-Y (UNIX only)
+
+You can also specify four special @ref{CMDSUF,command suffixes}.
+
+@entry{CMDSUF,        Command Suffixes}
+
+These four special characters, defines in the @ref{COMMANDOPTS,command options}
+submenu, allow you to prepend and append useful prefixes and suffixes
+to commands. For example, if you often pipe the output of commands
+through a paginator, you can set up a suffix character which will
+automatically add the `| more' (or whatever) for you. Here are the
+default settings for DOS and UNIX:
+
+           DOS              UNIX
+ Char Prefix Suffix     Prefix Suffix         Comment
+ ---------------------------------------------------------------------
+  |   none   | $pager   none   | $pager	      Paginate output (stdout)
+  @   rse    none       none   2>&1           Send stderr to stdout
+  !   rse    | $pager   none   2>&1 | $pager  Paginate stderr and stdout
+  <   none   < $pfile   none   < $pfile       Redirect input from file
+                                                at cursor position
+
+@entry{OTHEROPTS,      Other Options}
+
+Various other options can be set in this submenu, including:
+
+     * whether the @ref{FUNCBIND,function keys} should be bound to Norton-Commander-
+          like actions
+     * whether some more @ref{EXPERT,obscure and hackish} actions should be sound
+          to keys
+     * whether directories can be selected like other files or not
+     * whether @ref{FILEVIEW,file viewer} windows should show line number when
+          displaying files
+     * whether the @ref{SAFEDEL,safe delete} feature should be used
+     * whether symbolic links should be followed when moving around
+          directories
+     * what editor, pager, viewer, mail reader and news reader to use.
+
+@entry{FUNCBIND,        Function Key Bindings}
+
+The function keys can optionally be bound as follows:
+
+    F1    Show key binding help
+    F2    Rename the current file
+    F3    View the current file(s)
+    F4    Edit the current file(s)
+    F5    Copy the current file(s) to other directory
+    F6    Move the currently selected files to other directory
+    F7    Make a new directory
+    F8    Delete the current file(s)
+    F10   Exit from Gram's Commander
+
+@entry{EXPERT,        `Expert' Key Bindings}
+
+The following actions can be optionally bound to keys:
+
+  DOS Key    UNIX Key     Action
+ --------------------------------------------------------------------
+  Alt-1      ~            Start/stop recording keystroke macro
+  Alt-2      %            Play back keystroke macro
+             P            Compare marked files to another directory
+                            (useful for creating patch files)
+  Alt-f      R            Restrict displayed files (same as setting a
+                            @ref{FILTER,filter}
+	 *                Show current values of all GC variables
+         ^                Search for filename matching a pattern
+       Ctrl-L             Lock currently viewed file in viewer
+
+@entry{ATTRIBMENU,    Screen Attributes}
+
+The Attribute submenu varies depending on whether gc3 is in @ref{COLORATTR,colour}
+mode or @ref{MONOATTR,monochrome} mode. In either case you have to
+set the values for four attributes. The first attribute is the
+attribute gc3 uses for normal text. The second is used for
+highlighting (for example, indicating selected files, the active
+window, the command line editor cursor, etc). The third attribute is
+used for indicating hypertext links and menu items, while the fourth
+is used to indicate the currently selected hypertext link or menu item.
+
+@entry{MONOATTR,      Setting Attributes for Mono Displays}
+
+This submenu presents you with a choice of four more submenus, one
+for each of gc3's @ref{ATTRIBMENU,four attributes}. Select which
+attribute you wish to change. You will then be presented with a form
+in which you can select which monochrome attributes should be used
+for the selected gc3 attribute. There are two radio buttons allowing
+you to select between normal and inverse text, and three modifiers to
+enable or disable blinking, underlining, or bold display. Not all of
+these work on all terminals. gc3 uses the defaults:
+
+        Attribute 1:            Normal
+        Attributes 2 and 3:     Inverse
+        Attribute 4:            Inverse plus Bold (DOS) or Blink (UNIX)
+
+@entry{COLORATTR,      Setting Attributes for Colour Displays}
+
+This submenu presents you with a form in which you specify the
+foreground and background colours for each of gc3's @ref{ATTRIBMENU,four attributes}.
+Each entry is a toggle. Move to the entry you wish to change and
+press the Space bar until the colour you want appears.
+
+@entry{UTILMENU,    The Utilities Menu}
+
+The utilities menu gives you quick access to some common commands.
+The available commands are:
+
+    * run a sub-shell (command interpreter)
+    * invoke the built-in gc3 expression calculator
+    * @ref{COMPFILEOPT,compare the directories}
+    * @ref{FILEFINDER,find files} (UNIX only)
+    * read mail (with the mail reader specified in the @ref{OTHEROPTS,other options}
+        submenu)
+    * read network news (with the news reader specified in the
+        @ref{OTHEROPTS,other options} submenu)
+    * @ref{TALKMENU,talk} to someone with the UNIX talk program
+    * if the @ref{SAFEDEL,safe delete} option is being used, you can perform
+        various operations on the @ref{TRASHACTIONS,trash}.
+
+@entry{FILEFINDER,      The File Finder}
+
+This submenu gives UNIX novices an easy interface to the most
+commonly used features of the powerful `find' command. You specify
+the various options you want, and gc3 builds and runs the appropriate
+invocation of `find'. The options are:
+
+    * the root directory for the search
+    * a filename pattern that files must match
+    * a restriction on the file size
+    * a restriction on the modification date
+    * whether you want to view the names of the matching files, their
+        contents, or whether you want to apply a command to them.
+        If the latter, you must specify the command. You can also 
+        stipulate whether you want to confirm each command or not.
+
+Once you have set the options you wish, you start the search by
+pressing ENTER on the `Start' item.
+
+@entry{COMPFILEOPT,      Comparing Directories}
+
+The Compare Directories submenu lets you compare the two displayed
+directories by various criteria. You must choose which attributes
+must match, of the following possibilities:
+
+    * name
+    * size
+    * modification time
+    * contents
+    * owner and group (UNIX only)
+
+When two files are found that match each other according to the
+selected criteria, you can specify whether the most-recently or
+least-recently one should be selected, or whether both should be
+selected.
+
+@entry{TALKMENU,      Talking to Other Users}
+
+The talk submenu lets you choose from a toggle list of the users who
+are logged on locally, or type in the network address of a remote
+user. You can then attempt to start a conversation with the specified
+user. 
+
+Note that this is really just a simple interface to the UNIX `talk'
+utility, which is quite primitive.
+
+@entry{TRASHACTIONS,      Using the Trash Directory}
+
+The Utilities menu allows you to operate on the trash directory if
+the safe delete feature is enabled. You can empty the trash directory
+(after which you cannot undelete the files that were in the trash),
+view a list of the files that are in the trash, and undelete files.
+In the latter instance, you can move through a toggle list of deleted
+files and choose the one you wish to restore. The file will be
+restored to the current directory, not the one it was in when it was
+deleted.
+
+@entry{HELPMENU,    The Help Menu}
+
+The help menu lets you invoke this hypertext help system, as well as
+display the list of active key assignments.
+
+@entry{LEGAL,Legal Stuff}
+
+1. gc3 may be freely distributed and used in non-commercial, non-profit
+   institutions, or for personal non-commercial use by individuals at
+   home, provided it is distributed with all files intact and unmodified.
+
+2) gc3 may not be sold or published in any commercial form for profit
+   without my permission. If you are in the business of making and
+   selling CD-ROMs, and wish to include this program, you may do so in
+   exchange for sending me a copy of the CD-ROM.
+
+3) If you use gc3 within a commercial environment, or on a machine used
+   for commercial purposes, you are required to @ref{REGISTER,register}. The registration
+   fee is U.S. $20 per user. If you have more than 8 users at a site, you
+   may obtain a site license. Contact me for details.
+
+
+@entry{REGISTER,Registering gc3}
+
+The registration fee per user is:
+
+      US Dollars          $20  for North America
+      UK Pounds           #15  or equivalent Eurocurrency
+      SA Rands            R50  for Southern Africa only
+   
+If you have more than 8 users at a site, you may obtain a site license.
+Contact me for details. Please send your registration fees to:
+
+	Graham Wheeler
+	P.O. Box 6680
+	Roggebaai 8012
+	Cape Town
+	South Africa
+
+@entry{WHATUGET,What you Get}
+
+Registered users will receive the latest version of gc3, together
+with the full gc3 manual which documents the gc3.key file in more
+detail, as well as documenting GCScript, the language in which the
+gc3.key file is written. This manual will be of particular use to
+those who want to customise gc3 to their own particular preferences.
+
+Registered users will be entitled to a reasonable amount of
+e-mail support (gram@aztec.co.za).
+
+Registered users can also know that their constribution helps to
+enable me to improve gc3.
+
+@entry{ACKS,Acknowledgements}
+
+I would like to thank all those who have helped in the testing
+of gc3; the program would be a lot less useful without them!
+In particular, the following people have provided lots of feedback
+about bugs and portability problems of the past two years:
+
+     Ruediger Schwarz (ruediger@schwarz.in-berlin.de)
+     Uwe Fuerst (uf@phiger.com)
+     Rainer Leidl (leidl@century.telis-finanz.de)
+     Carsten Clasohm (clasohm@informatik.tu-muenchen.de)
+     Laszlo Herczeg (las@io.org)
+     Jonathan Kitchin (jon@DIALix.oz.au)
+
+The improvements in user-friendliness are largely due to the
+encouragement of Mike Lawrie (ccml@hippo.ru.ac.za).
+
+
+        

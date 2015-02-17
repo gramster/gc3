@@ -1,0 +1,44 @@
+If you have got this package off the Sunsite Linux archive, here's how
+to install without recompiling:
+
+1. Copy gc3 and sel to an appropriate directory such as /usr/local/bin.
+2. Copy gc3.man and sel.man to appropriate directories, and rename them
+	appropriately. For example, you may do:
+
+	cp gc3.man /usr/local/man/man1/gc3.1
+	cp sel.man /usr/local/man/man1/sel.1
+
+3. Copy gc3help.*, gcrules and gc3.key to an appropriate directory.
+   This is the tricky part, as gc3 doesn't look in lib directories.
+   It will usually look in the home directory, and then in directories
+   specified in your path. So, you could copy them to the same directory
+   as the binaries. If you are the only user you could put them in 
+   your home directory. Otherwise put them in some other directory on
+   the path.
+
+   If you know how to, you can put them in a lib directory such
+   as /usr/local/lib/gc3, and then set the GCPATH environment
+   variable to point to that directory. This is how I do it.
+
+   When you copy gcrules, you should name the copy ".gc3rul".
+   Ideally each user will have their own rule file in their 
+   home directory. Many basic customisations of gc3 can be
+   done by modifying this file (see the on-line help for details).
+   It is less likely that the gc3.key file will be edited, so
+   this should be kept centrally. Users who want to customise it
+   can make a copy in their home directories, as gc3 will look
+   there first.
+
+4. You should now be able to run gc3. The first time it starts
+   it will try to find gc3.key and compile it. Once that succeeds
+   it will start up. If that fails try setting the GCPATH environment
+   variable to point to the directory containing gc3.key.
+
+5. Once gc3 starts, you should be able to call up the main menu
+   bar by pressing backspace. If that doesn't work, try Ctrl-H. You
+   can then press 'H' for Help, followed by Enter, to get to the
+   help menu.
+
+   From there you're on your own!
+
+

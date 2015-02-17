@@ -1,0 +1,70 @@
+README for Gram's Commander v3.3
+=================================
+
+Please read the various .DOC files for full details about gc3.3. The
+gc3 UNIX manual entry is very terse and really just refers to the doc
+files as well. The INSTALL.DOC file tells you how to compile and
+install gc3. The LEGAL.DOC file specifies our respective legal rights.
+The USER.DOC file describes gc3 from a user's perspective, as well
+as giving an overview of gc3's behaviour when used with the default
+script file `gc3.key'. The PROG.DOC describes the GCScript language
+used by gc3. Note that the USER.DOC and PROG.DOC files are only
+available with the registered version.
+
+gc3 is also bundled with a utility called `sel'. This is similar
+to the `select' utility in 4DOS/NDOS; for UNIX users it is best
+described as an interactive version of xargs. That is, sel allows
+you to build a command line by selecting arguments interactively
+from a list. The list can be given on the command line or read
+from standard input.
+
+				* * *
+
+WHAT IS GC?
+===========
+
+gc is a window-based file manager program for DOS and UNIX. It is very 
+flexible due to the use of a script language. In fact, gc is really an 
+interpreter for a language called GCScript. Functions written in the 
+script language are assigned to keys, and can be used to do useful 
+things like marking a set of files, applying an operation to a set of 
+marked files, and so on. Easy access to the command shell is provided 
+so that you do not need to quit gc to execute a normal shell command. 
+gc is very useful for file maintenance operations, and for DOS users 
+who are new to UNIX but are familiar with programs like Norton Commander,
+gc should be a treat (I have been using gc myself under DOS in place of 
+Norton Commander for the last few years, and I prefer it).
+
+If you have problems compiling gc3, or you notice bugs, please mail me
+a report to gram@aztec.co.za. I will do my best to deal with these as
+they are reported. If you can fix a bug and send me a patch, even better. 
+When reporting problems, please specify your hardware, operating system, 
+and compiler, as well as any errors or warnings reported by the compiler. 
+Also, please send a copy of the `site.def' file (which is created by the
+gcconfig program during installation).
+
+Enjoy!
+Gram (Graham Wheeler)
+
+==========================================================================
+OBTAINING THE LATEST VERSION
+
+I maintain a mailing list for gc3 distribution; send me mail if you
+do not have access to ftp facilities and want to be added to the list.
+Otherwise the following sites should have the latest or recent versions
+of gc3:
+
+  Site             Directory    Description
+  -----------------------------------------------------------------------
+  ftp.cs.uct.ac.za pub/misc/gc	Computer Science Dept, Univ. of Cape Town
+  ftp.aztec.co.za  pub/gram	Aztec Public Access Internet
+
+These sites are in South Africa. If you are the moderator of a site
+in some other country and would be prepared to archive gc3 on your
+site, then let me know and I'll add you to the list. You will also
+be added to a mailing list announcing new releases. This is 
+desirable, as there are only two `public' links between South Africa
+and the continental USA, and none to Europe, so ftp to these sites can
+be s-l-o-w.
+
+

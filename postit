@@ -1,0 +1,9 @@
+#!/bin/sh
+# Post gc3 to alt.sources
+make unix
+make package
+for i in gcpost*
+do
+	echo "\ny\n$i\ns\n" > /tmp/junk
+	Pnews alt.sources "Gram's Commander v3.3 part $i (of 13)" < /tmp/junk
+done

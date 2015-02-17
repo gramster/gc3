@@ -1,0 +1,151 @@
+.TH sel l "1 November 1993"
+.SH NAME
+sel \- a general-purpose file selection utility
+.SH SYNTAX
+.B "sel "
+[
+.B "-w"
+.I "<width>"
+]
+[
+.B "-i"
+[
+.B "-n"
+.I "<field>"
+]
+]
+.I "<cmd>"
+[
+.I "<flags>"
+]
+.I "<entries>"
+
+.SH DESCRIPTION
+.I sel
+presents the user with a window containing a list of entries, as given on
+the command line. If the 
+.B "-i"
+option is present, standard input is read for additional entries until
+end-of-file or the maximum number of allowed entries is reached.
+
+The user can move through the list with the cursor keys, and
+select/deselect entries with the space bar or Ins key.
+Upon pressing return, the
+.B "<cmd>"
+is executed with the set of selected entries as arguments. The
+.B "<flags>"
+are passed through to the command as well. Flags must begin with
+a `-' to be recognised as such; the entries start with the first
+argument to 
+.B "sel"
+following the command that is not a flag (thus
+the flags do not appear in the entry list and cannot be selected
+or deselected).
+
+The 
+.B "<width>" 
+argument allows you to specify the width to use to display an entry.
+You can use this to get more columns in the display.
+
+The 
+.B "<field>"
+argument causes 
+.B "sel"
+to strip out the specified field from each line read from
+the standard input (starting with field 0). It is assumed 
+that fields are separated by whitespace. If not, you should
+use 
+.B "cut" 
+before piping the entries to
+.B "sel"
+.
+
+.PP
+.B sel
+supports the following interactive keys:
+.TP 1.2i
+.B "arrow keys"
+move in the direction of the arrow
+.TP 1.2i
+.B "k, j, h, l"
+move up, down, left, or right respectively
+.TP 1.2i
+.B "<space>"
+toggle selection of filename at cursor and move to next one
+.TP 1.2i
+.B "<Ins>"
+same as Space.
+.TP 1.2i
+.B "A"
+select all filenames
+.TP 1.2i
+.B "N"
+deselect all filenames
+.TP 1.2i
+.B "I"
+invert all selections
+.TP 1.2i
+.B "H, ?"
+display help message
+.TP 1.2i
+.B "<return>"
+exit with selected filenames
+.TP 1.2i
+.B "<escape>"
+exit with no action
+.TP 1.2i
+.B "+"
+allow the user to enter an
+.B "ed"
+(1) regular expression; all arguments that
+match the expression are selected
+.TP 1.2i
+.B "X"
+invoke a user specified command with the current argument
+.TP 1.2i
+.B "Z"
+invoke a user specified command with the currently selected arguments
+.TP 1.2i
+.B "-"
+similar to 
+.B "+"
+, but the matching files are deselected
+.SH EXAMPLES
+.nf
+	sel vi *.c
+	sel ls -l /bin/*
+ 	sel echo *.c | xargs cc -c
+	find . -name '*.c' -print | sel -i cc -c
+.fi
+
+The third example is equivalent to the simpler:
+
+.nf
+	sel cc -c *.c
+.fi
+.SH NOTES
+Remember that quoted arguments have their quotes stripped by the shell
+before they are passed to 
+.I sel.
+
+When using 
+.B "X"
+or 
+.B "Z"
+interactively, you can use 
+.B "@"
+as a placeholder
+in the command string to represent where the arguments
+must go. If there is no 
+.B "@"
+the arguments are appended to the command string.
+.SH SEE ALSO
+.I regexp
+(5)
+
+.I gc3
+(l) Gram's Commander.
+.SH AUTHOR
+Graham Wheeler, gram@aztec.co.za.
+
+

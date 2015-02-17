@@ -1,0 +1,274 @@
+.TH gc3 l "27 April 1994/New SA Day 1"
+.SH NAME
+gc3 \- Gram's Commander v3.3
+.SH SYNTAX
+.B "gc3 "
+[ flags ]
+[
+.I "<path1>"
+[
+.I "<path2>"
+]
+]
+
+.SH DESCRIPTION
+.I gc3
+is a general-purpose, programmable file manager for UNIX and
+MS-DOS, similar in nature to the well-known DOS file manager
+`Norton Commander'.
+
+When started up,
+.I gc3
+presents the user with two windows containing lists of the files in
+the directories specified by the path arguments, and two windows
+showing information about each of these paths. Each file list
+window has an arrow shaped cursor which points at one of the file
+names. Further information about the pointed-at file is also shown
+in the information window. The bottom line of the screen is a one-
+line borderless command window for entering commands. This is also
+where error messages are displayed, and where gc3 commands can
+prompt for input.
+
+If a path argument(s) is missing, the current directory is used for
+the left-hand window, while the path for the right hand window
+will be the directory that was current when you last executed 
+.I gc3.
+This is determined from the
+.B initialisation file
+.I .gc3ini
+which also saves the last known value of options and
+variable settings upon exit. 
+.I gc3
+searches for the initialisation path in the directory
+specified by the 
+.B "$GCPATH"
+environment variable. If this is not set the 
+.B "$HOME"
+environment variable is used instead.
+
+The user can move through the file list with the cursor keys, and
+select/deselect files. Various actions are possible upon either the
+current file (namely the one at which the cursor is positioned) or
+upon the set of selected files in that directory.
+
+.PP
+.I gc3
+supports a number of commands. The actual commands may vary
+from site to site (or from user to user). To find out the
+list of commands that 
+.I gc3
+supports at your site, press the help key (usually 
+.B "H"
+).
+
+The behaviour of 
+.I gc3
+is determined by a script file written in a language called
+.I GCScript.
+Full details of the script files and how to configure 
+.B "gc3"
+can be found in the documentation files that accompany the
+registered gc3 package. The file
+.B "USER.DOC"
+also contains considerably more detailed information about
+using
+.B "gc3"
+than this manual entry does.
+
+
+.SH COMMAND LINE FLAGS
+
+.TP 1.2i
+.B "-c"
+supresses the use of colour.
+
+.TP 1.2i
+.B "-C"
+[<script>]
+forces a script recompile; the default script
+name if one is not specified is `gc3.key'.
+
+.TP 1.2i
+.B "-d"
+[
+.B "n"
+][
+.B "l"
+]
+writes a disassembled listing of the compiled script
+to stdout. The 
+.B "n"
+option produces a numeric dump, while the
+.B "l" option causes the link phase to be skipped.
+
+.TP 1.2i
+.B "-D"
+.I "<id>"
+allows you to define identifiers for conditional
+compilation of the script (used with 
+.B "-C"
+).
+
+.TP 1.2i
+.B "-i"
+shows the current instruction pointer value at bottom.
+
+.TP 1.2i
+.B "-I"
+forces the 
+.B "gcinit"
+function in the script to be called.
+
+.TP 1.2i
+.B "-t"
+or 
+.B "-T"
+write an instruction trace to the file
+.B "gc3.ip"
+, useful for post-mortem debugging.
+.B " -T"
+starts the trace from the execution of 
+.B "gcinit"
+while
+.B "-t"
+starts from the key processing loop.
+
+.TP 1.2i
+.B "-v"
+causes the compiler to output more verbose messages.
+
+.SH THE DEFAULT SCRIPT FILE
+
+Under UNIX, no lower-case letters other than
+.B "j"
+and
+.B "k"
+are bound. Thus, pressing
+any of these unbound keys causes the
+.B "gcdefault"
+function to be called.
+This function invokes the command line editor after inserting the
+key that was pressed into the command line esitor buffer. You will
+see a prompt
+.B "Command?"
+at the bottom of the screen. You can then 
+complete the command and execute it by pressing ENTER. If you end the
+command with a pipe character
+.B "|"
+, the file pager command defined by the
+.B "$pager"
+variable will automatically be appended to the command 
+line before it is executed.
+
+gc3 includes a hypertext help system with considerably
+more information. You can enter this help system by
+pressing Ctrl-B. The manual which accompanies registered
+versions of gc3 also has considerably more information.
+
+.SH THE COMMAND LINE EDITOR
+
+The default command line editor setup for UNIX is:
+
+.TP 1.2i
+.B "^F"
+insert current file name at cursor position
+
+.TP 1.2i
+.B "^L"
+Move cursor to left hand end (start) of line
+
+.TP 1.2i
+.B "^R"
+ Move cursor to right-hand end of line
+
+.TP 1.2i
+.B "Del"
+Delete the character under the cursor
+
+.TP 1.2i
+.B "Backspace"
+Delete the character left of the cursor
+
+.TP 1.2i
+.B "Ins"
+Toggle Ins/overstrike modes. You can see the current mode as a `+' (insert)
+or `-' (overstrike) at the right hand end of the command line
+
+.TP 1.2i
+.B "ESC"
+Clear whole line
+
+.TP 1.2i
+.B "^E"
+Erase from start of line
+
+.TP 1.2i
+.B "^K"
+Kill to end of line
+
+.TP 1.2i
+.B "^P"
+Delete from start of previous word to cursor
+
+.TP 1.2i
+.B "^N"
+Delete to from cursor to start of next word
+
+.TP 1.2i
+.B "^B"
+Move cursor to previous word
+
+.TP 1.2i
+.B "^W"
+Move cursor to next word
+
+.TP 1.2i
+.B "PgUp"
+Recall previous command in command history list
+
+.TP 1.2i
+.B "PgDn"
+Recall next command in command history list
+
+.SH FILES
+
+.TP 1.2i
+.B "$GCPATH/gc3.key"
+The script file that determines how gc3 behaves
+
+.TP 1.2i
+.B "$GCPATH/.gc3ini"
+The startup file containing the last active path, option values
+and variable values
+
+.TP 1.2i
+.B "$GCPATH/.gc3cod"
+The compiled script code file
+
+.TP 1.2i
+.B "$GCPATH/.gc3rul"
+The rules that gc3 uses to decide what editor and paginator to use, and how to 
+handle container files (such as tar, cpio and zip files).
+
+.TP 1.2i
+The gc3 User's Manual (registered users only)
+
+.TP 1.2i
+.B "INSTALL.DOC"
+The installation documentation
+
+.SH SEE ALSO
+The
+.I ed
+(1) editor.
+
+.I regexp
+(5)
+
+.I sel
+(l) a general argument selector
+
+.SH AUTHOR
+Graham Wheeler, gram@aztec.co.za.
+
+

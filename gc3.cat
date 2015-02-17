@@ -1,0 +1,214 @@
+gc3(l)                                                     gc3(l)
+
+
+
+NNAAMMEE
+       gc3 - Gram's Commander v3.3
+
+SSYYNNTTAAXX
+       ggcc33 [ flags ] [ _<_p_a_t_h_1_> [ _<_p_a_t_h_2_> ] ]
+
+
+DDEESSCCRRIIPPTTIIOONN
+       _g_c_3  is  a  general-purpose, programmable file manager for
+       UNIX and MS-DOS, similar in nature to the  well-known  DOS
+       file manager `Norton Commander'.
+
+       When  started  up,  _g_c_3 presents the user with two windows
+       containing lists of the files in the directories specified
+       by the path arguments, and two windows showing information
+       about each of these paths. Each file list  window  has  an
+       arrow shaped cursor which points at one of the file names.
+       Further information about  the  pointed-at  file  is  also
+       shown  in  the  information window. The bottom line of the
+       screen is a one- line borderless command window for enter-
+       ing  commands.  This is also where error messages are dis-
+       played, and where gc3 commands can prompt for input.
+
+       If a path argument(s) is missing, the current directory is
+       used  for  the  left-hand  window,  while the path for the
+       right hand window will be the directory that  was  current
+       when  you  last executed _g_c_3_.  This is determined from the
+       iinniittiiaalliissaattiioonn ffiillee _._g_c_3_i_n_i  which  also  saves  the  last
+       known  value  of  options and variable settings upon exit.
+       _g_c_3 searches for the initialisation path in the  directory
+       specified  by the $$GGCCPPAATTHH environment variable. If this is
+       not set the $$HHOOMMEE environment variable is used instead.
+
+       The user can move through the file list  with  the  cursor
+       keys,  and select/deselect files. Various actions are pos-
+       sible upon either the current  file  (namely  the  one  at
+       which  the  cursor  is  positioned)  or  upon  the  set of
+       selected files in that directory.
+
+
+       _g_c_3 supports a number of commands. The actual commands may
+       vary from site to site (or from user to user). To find out
+       the list of commands that _g_c_3 supports at your site, press
+       the help key (usually HH ).
+
+       The  behaviour of _g_c_3 is determined by a script file writ-
+       ten in a language called _G_C_S_c_r_i_p_t_.  Full  details  of  the
+       script  files and how to configure ggcc33 can be found in the
+       documentation files  that  accompany  the  registered  gc3
+       package. The file UUSSEERR..DDOOCC also contains considerably more
+       detailed information about  using  ggcc33  than  this  manual
+       entry does.
+
+
+
+CCOOMMMMAANNDD LLIINNEE FFLLAAGGSS
+       --cc          supresses the use of colour.
+
+
+       --CC          [<script>]  forces  a  script  recompile;  the
+                   default script name if one is not specified is
+                   `gc3.key'.
+
+
+       --dd          [  nn  ][  ll ] writes a disassembled listing of
+                   the compiled script to stdout.  The  nn  option
+                   produces  a  numeric  dump, while the ll ooppttiioonn
+                   ccaauusseess tthhee lliinnkk pphhaassee ttoo bbee sskkiippppeedd..
+
+
+       --DD          _<_i_d_> allows you to define identifiers for con-
+                   ditional  compilation of the script (used with
+                   --CC ).
+
+
+       --ii          shows the current instruction pointer value at
+                   bottom.
+
+
+       --II          forces the ggcciinniitt function in the script to be
+                   called.
+
+
+       --tt          or --TT write an instruction trace to  the  file
+                   ggcc33..iipp  ,  useful for post-mortem debugging.
+                   --TT starts the  trace  from  the  execution  of
+                   ggcciinniitt while --tt starts from the key processing
+                   loop.
+
+
+       --vv          causes the compiler  to  output  more  verbose
+                   messages.
+
+
+TTHHEE DDEEFFAAUULLTT SSCCRRIIPPTT FFIILLEE
+       Under  UNIX,  no lower-case letters other than jj and kk are
+       bound. Thus, pressing any of these unbound keys causes the
+       ggccddeeffaauulltt  function  to  be called.  This function invokes
+       the command line editor after inserting the key  that  was
+       pressed  into the command line esitor buffer. You will see
+       a prompt CCoommmmaanndd??  at the bottom of the  screen.  You  can
+       then  complete  the  command  and  execute  it by pressing
+       ENTER. If you end the command with a pipe  character  ||  ,
+       the file pager command defined by the $$ppaaggeerr variable will
+       automatically be appended to the command line before it is
+       executed.
+
+       gc3  includes  a  hypertext  help system with considerably
+       more information. You can enter this help system by press-
+       ing  Ctrl-B.  The manual which accompanies registered ver-
+       sions of gc3 also has considerably more information.
+
+
+TTHHEE CCOOMMMMAANNDD LLIINNEE EEDDIITTOORR
+       The default command line editor setup for UNIX is:
+
+
+       ^^FF          insert current file name at cursor position
+
+
+       ^^LL          Move cursor to left hand end (start) of line
+
+
+       ^^RR           Move cursor to right-hand end of line
+
+
+       DDeell         Delete the character under the cursor
+
+
+       BBaacckkssppaaccee   Delete the character left of the cursor
+
+
+       IInnss         Toggle Ins/overstrike modes. You can  see  the
+                   current  mode  as a `+' (insert) or `-' (over-
+                   strike) at the right hand end of  the  command
+                   line
+
+
+       EESSCC         Clear whole line
+
+
+       ^^EE          Erase from start of line
+
+
+       ^^KK          Kill to end of line
+
+
+       ^^PP          Delete from start of previous word to cursor
+
+
+       ^^NN          Delete to from cursor to start of next word
+
+
+       ^^BB          Move cursor to previous word
+
+
+       ^^WW          Move cursor to next word
+
+
+       PPggUUpp        Recall  previous  command  in  command history
+                   list
+
+
+       PPggDDnn        Recall next command in command history list
+
+
+FFIILLEESS
+       $$GGCCPPAATTHH//ggcc33..kkeeyy
+                   The  script  file  that  determines  how   gc3
+                   behaves
+
+
+       $$GGCCPPAATTHH//..ggcc33iinnii
+                   The  startup  file  containing the last active
+                   path, option values and variable values
+
+
+       $$GGCCPPAATTHH//..ggcc33ccoodd
+                   The compiled script code file
+
+
+       $$GGCCPPAATTHH//..ggcc33rruull
+                   The rules that gc3 uses to decide what  editor
+                   and  paginator  to use, and how to handle con-
+                   tainer  files  (such  as  tar,  cpio  and  zip
+                   files).
+
+
+       The gc3 User's Manual (registered users only)
+
+
+       IINNSSTTAALLLL..DDOOCC The installation documentation
+
+
+SSEEEE AALLSSOO
+       The _e_d (1) editor.
+
+       _r_e_g_e_x_p (5)
+
+       _s_e_l (l) a general argument selector
+
+
+AAUUTTHHOORR
+       Graham Wheeler, gram@aztec.co.za.
+
+
+
+
+
+                    27 April 1994/New SA Day 1             gc3(l)
