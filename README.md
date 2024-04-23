@@ -5,3 +5,4 @@ Gram's Commander was a popular two-pane file manager for MS-DOS and UNIX that I 
 
 I started work on a v4 that would have replaced the custom DSL with Tcl but never completed that. I keep swearing I'll one day do it with Python.
 
+![IMG_5240](https://github.com/gramster/gc3/assets/2762632/690221e1-457b-4f26-a334-f1f8ee7892a4)
